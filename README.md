@@ -23,6 +23,7 @@ Regras de négocio:
 
 - Conta de origem e destino devem ser informadas;
 - Valor a ser transferido deve ser informado e maior que zero;
+- As transações são processadas assincronamente pela aplicação back-end: [Fund Transfer Worker](https://github.com/grecojoao/fund-transfer-worker)
 
 
 
