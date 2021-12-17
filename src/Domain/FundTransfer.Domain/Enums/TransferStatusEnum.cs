@@ -1,4 +1,4 @@
-﻿namespace FundTransfer.Domain.Entities.Enums
+﻿namespace FundTransfer.Domain.Enums
 {
     public enum TransferStatusEnum
     {

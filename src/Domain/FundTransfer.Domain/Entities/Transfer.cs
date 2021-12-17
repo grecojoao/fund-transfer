@@ -1,12 +1,11 @@
-﻿using FundTransfer.Domain.Entities.Enums;
+﻿using FundTransfer.Domain.Enums;
 
 namespace FundTransfer.Domain.Entities
 {
     public class Transfer
     {
-        public long Id { get; set; }
         public Guid TransactionId { get; private set; }
-        public TransferStatusEnum TransferStatusEnum { get; private set; }
+        public TransferStatusEnum TransferStatus { get; private set; }
         public string Message { get; private set; }
         public string AccountOrigin { get; private set; }
         public string AccountDestination { get; private set; }
@@ -15,23 +14,19 @@ namespace FundTransfer.Domain.Entities
         public Transfer() { }
 
         public Transfer(
-            Guid transactionId, TransferStatusEnum transferStatusEnum, string accountOrigin,
-            string accountDestination, float? value, string message = "")
+            Guid transactionId, TransferStatusEnum transferStatus, string accountOrigin, string accountDestination, float? value, string message = "")
         {
             TransactionId = transactionId;
-            TransferStatusEnum = transferStatusEnum;
+            TransferStatus = transferStatus;
             AccountOrigin = accountOrigin;
             AccountDestination = accountDestination;
             Value = value;
             Message = message;
         }
 
-        public void Change(TransferStatusEnum transferStatusEnum) =>
-            TransferStatusEnum = transferStatusEnum;
-
-        public void Change(TransferStatusEnum transferStatusEnum, string message)
+        public void Change(TransferStatusEnum transferStatus, string message = "")
         {
-            TransferStatusEnum = transferStatusEnum;
+            TransferStatus = transferStatus;
             Message = message;
         }
     }

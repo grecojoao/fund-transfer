@@ -2,5 +2,5 @@
 
 namespace FundTransfer.Api.Responses
 {
-    public record StatusTransferResponse(TransferStatusEnum TransferStatusEnum, string Message = "") { }
+    public record StatusTransferResponse(TransferStatusEnum TransferStatus, string Message = "") { }
 }

@@ -1,11 +1,10 @@
-﻿using FundTransfer.Domain.Entities;
+﻿using FundTransfer.Domain.Dtos;
 
 namespace FundTransfer.Domain.Repositories
 {
-    public interface ITransferRepository : ITransaction
+    public interface ITransferRepository
     {
-        Task AddAsync(Transfer transfer, CancellationToken cancellationToken);
-        Task UpdateStatus(Transfer transfer);
+        Task AddAsync(Transfer transferDto, CancellationToken cancellationToken);
         Task<Transfer> GetAsync(Guid transactionId, CancellationToken cancellationToken);
     }
 }

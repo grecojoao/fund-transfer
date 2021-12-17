@@ -1,10 +1,10 @@
-﻿using FundTransfer.Domain.Repositories;
-using FundTransfer.Infra.Storage.Context;
-using FundTransfer.Infra.Storage.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using FundTransfer.Domain.Bus.Publishers;
+using FundTransfer.Domain.Repositories;
+using FundTransfer.Infra.RabbitMq.Publishers;
+using FundTransfer.Infra.Storage.RavenDb.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Raven.Client.Documents;
 
 namespace FundTransfer.IoC.Infra
 {
@@ -12,19 +12,25 @@ namespace FundTransfer.IoC.Infra
     {
         public static Task Inject(IServiceCollection services, IConfiguration configuration)
         {
-            InjectStorage(services, configuration).Wait();
+            InjectStorage(services, configuration);
+            InjectBus(services);
             return Task.CompletedTask;
         }
 
-        private static Task InjectStorage(IServiceCollection services, IConfiguration configuration)
+        private static void InjectStorage(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<DbContext, DataContext>(options =>
-            {
-                options.UseInMemoryDatabase("FundTransferDataBase");
-                options.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
-            });
+            services.AddScoped(a => ConfigureDataBase(configuration));
             services.AddScoped<ITransferRepository, TransferRepository>();
-            return Task.CompletedTask;
         }
+
+        private static DocumentStore ConfigureDataBase(IConfiguration configuration) =>
+            new()
+            {
+                Urls = new string[] { configuration["ConnectionStrings:RavenDb:Url"] },
+                Database = configuration["ConnectionStrings:RavenDb:DataBase"]
+            };
+
+        private static void InjectBus(IServiceCollection services) =>
+            services.AddScoped<IBusPublisher, RabbitMqBusPublisher>();
     }
 }
