@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -8,6 +8,13 @@
   <ItemGroup>
     <PackageReference Include="FlyGon.CQRS" Version="1.0.1" />
     <PackageReference Include="FlyGon.Notifications" Version="1.1.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.2.2" />
+    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FundTransfer.Domain.Bus\FundTransfer.Domain.Bus.csproj" />
   </ItemGroup>
 
 </Project>

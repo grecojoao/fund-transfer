@@ -1,7 +1,8 @@
 ﻿using FlyGon.Notifications;
+using FundTransfer.Domain.Bus.Publishers;
 using FundTransfer.Domain.Commands;
-using FundTransfer.Domain.Entities;
-using FundTransfer.Domain.Entities.Enums;
+using FundTransfer.Domain.Dtos;
+using FundTransfer.Domain.Enums;
 using FundTransfer.Domain.Handlers;
 using FundTransfer.Domain.Repositories;
 using Moq;
@@ -20,7 +21,8 @@ namespace FundTransfer.Domain.Test.Handlers
         public void Setup()
         {
             var transferRepository = new Mock<ITransferRepository>();
-            _handler = new FundTransferHandler(transferRepository.Object);
+            var bus = new Mock<IBusPublisher>();
+            _handler = new FundTransferHandler(transferRepository.Object, bus.Object);
         }
 
         [Test]
@@ -45,7 +47,8 @@ namespace FundTransfer.Domain.Test.Handlers
                 .Setup(x => x.GetAsync((Guid)transactionId, default))
                 .Returns(Task.FromResult((Transfer)null));
 
-            _handler = new FundTransferHandler(transferRepository.Object);
+            var bus = new Mock<IBusPublisher>();
+            _handler = new FundTransferHandler(transferRepository.Object, bus.Object);
             var right = new StatusTransferCommand(transactionId);
             var commandResult = await _handler.Handle(right, default);
             Assert.False(commandResult.Sucess);
@@ -62,9 +65,10 @@ namespace FundTransfer.Domain.Test.Handlers
             transferRepository
                 .Setup(x => x.GetAsync((Guid)transactionId, default))
                 .Returns(Task.FromResult(
-                    new Transfer((Guid)transactionId, TransferStatusEnum.InQueue, "123", "321", 0.01f)));
+                    new Transfer((Guid)transactionId, TransferStatusEnum.InQueue)));
 
-            _handler = new FundTransferHandler(transferRepository.Object);
+            var bus = new Mock<IBusPublisher>();
+            _handler = new FundTransferHandler(transferRepository.Object, bus.Object);
             var right = new StatusTransferCommand(transactionId);
             var commandResult = await _handler.Handle(right, default);
             Assert.True(commandResult.Sucess);
@@ -83,7 +87,8 @@ namespace FundTransfer.Domain.Test.Handlers
                 .Setup(x => x.GetAsync((Guid)transactionId, default))
                 .Throws(new Exception(message));
 
-            _handler = new FundTransferHandler(transferRepository.Object);
+            var bus = new Mock<IBusPublisher>();
+            _handler = new FundTransferHandler(transferRepository.Object, bus.Object);
             var right = new StatusTransferCommand(transactionId);
             var commandResult = await _handler.Handle(right, default);
             Assert.False(commandResult.Sucess);

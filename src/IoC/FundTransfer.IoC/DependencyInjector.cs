@@ -9,7 +9,7 @@ namespace FundTransfer.IoC
     {
         public static Task InjectDependencies(IServiceCollection services, IConfiguration configuration)
         {
-            DomainInjector.Inject(services, configuration).Wait();
+            DomainInjector.Inject(services).Wait();
             InfraInjector.Inject(services, configuration).Wait();
             return Task.CompletedTask;
         }

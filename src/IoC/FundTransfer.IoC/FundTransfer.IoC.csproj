@@ -12,7 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\FundTransfer.Domain\FundTransfer.Domain.csproj" />
-    <ProjectReference Include="..\..\Infra\FundTransfer.Infra.Storage\FundTransfer.Infra.Storage.csproj" />
+    <ProjectReference Include="..\..\Infra\FundTransfer.Infra.RabbitMq\FundTransfer.Infra.RabbitMq.csproj" />
+    <ProjectReference Include="..\..\Infra\FundTransfer.Infra.Storage.RavenDb\FundTransfer.Infra.Storage.RavenDb.csproj" />
   </ItemGroup>
 
 </Project>
