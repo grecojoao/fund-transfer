@@ -1,4 +1,4 @@
-﻿using FundTransfer.Domain.Dtos;
+﻿using FundTransfer.Domain.Entities;
 using FundTransfer.Domain.Repositories;
 using Raven.Client.Documents;
 
@@ -14,11 +14,11 @@ namespace FundTransfer.Infra.Storage.RavenDb.Repositories
             _documentStore.Initialize();
         }
 
-        public Task AddAsync(Transfer transferDto, CancellationToken cancellationToken)
+        public Task AddAsync(Transfer transfer, CancellationToken cancellationToken)
         {
             using (var session = _documentStore.OpenSession())
             {
-                session.Store(transferDto, transferDto.TransactionId.ToString());
+                session.Store(transfer, transfer.TransactionId.ToString());
                 session.SaveChanges();
                 return Task.CompletedTask;
             };

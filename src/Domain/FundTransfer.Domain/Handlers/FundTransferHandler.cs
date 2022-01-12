@@ -2,7 +2,7 @@
 using FlyGon.CQRS.Handlers.Contracts;
 using FundTransfer.Domain.Bus.Publishers;
 using FundTransfer.Domain.Commands;
-using FundTransfer.Domain.Entities;
+using FundTransfer.Domain.Dtos;
 using FundTransfer.Domain.Enums;
 using FundTransfer.Domain.Repositories;
 using Newtonsoft.Json;
@@ -27,26 +27,27 @@ namespace FundTransfer.Domain.Handlers
         public async Task<CommandResult> Handle(TransferCommand command, CancellationToken cancellationToken)
         {
             command.Validate();
-            var transfer = command.IsValid ?
+            var transferDto = command.IsValid ?
                 new Transfer(
                     Guid.NewGuid(), TransferStatusEnum.InQueue, command.AccountOrigin, command.AccountDestination,
                     command.Value) :
                 new Transfer(
                     Guid.NewGuid(), TransferStatusEnum.Error, command.AccountOrigin, command.AccountDestination,
                     command.Value, command.NotificationsMessage());
-            Log.Debug($"{JsonConvert.SerializeObject(transfer)}");
+            Log.Debug($"{JsonConvert.SerializeObject(transferDto)}");
             try
             {
-                var transferDto = new Dtos.Transfer(transfer.TransactionId, transfer.TransferStatus);
-                await _transferRepository.AddAsync(transferDto, cancellationToken);
-                await _busPublisher.SendAsync(JsonConvert.SerializeObject(transfer));
+                var transfer = new Entities.Transfer(transferDto.TransactionId, transferDto.TransferStatus, transferDto.Message);
+                await _transferRepository.AddAsync(transfer, cancellationToken);
+                if (transferDto.TransferStatus == TransferStatusEnum.InQueue)
+                    await _busPublisher.SendAsync(JsonConvert.SerializeObject(transferDto));
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "");
                 return new CommandResult(false, ex?.Message);
             }
-            return new CommandResult(true, transfer.TransferStatus.ToString(), transfer.TransactionId);
+            return new CommandResult(true, transferDto.TransferStatus.ToString(), transferDto.TransactionId);
         }
 
         public async Task<CommandResult> Handle(StatusTransferCommand command, CancellationToken cancellationToken)
@@ -55,10 +56,10 @@ namespace FundTransfer.Domain.Handlers
             if (command.IsInvalid)
                 return new CommandResult(false, command.NotificationsMessage(), command.Notifications);
 
-            Dtos.Transfer transfer;
+            Entities.Transfer transfer;
             try
             {
-                transfer = await _transferRepository.GetAsync((Guid)command.TransactionId, cancellationToken); 
+                transfer = await _transferRepository.GetAsync((Guid)command.TransactionId, cancellationToken);
                 Log.Debug($"{JsonConvert.SerializeObject(transfer)}");
             }
             catch (Exception ex)

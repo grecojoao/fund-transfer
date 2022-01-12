@@ -1,7 +1,7 @@
 ﻿using FlyGon.Notifications;
 using FundTransfer.Domain.Bus.Publishers;
 using FundTransfer.Domain.Commands;
-using FundTransfer.Domain.Dtos;
+using FundTransfer.Domain.Entities;
 using FundTransfer.Domain.Enums;
 using FundTransfer.Domain.Handlers;
 using FundTransfer.Domain.Repositories;
